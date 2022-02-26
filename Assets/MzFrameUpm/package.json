@@ -1,0 +1,10 @@
+{
+  "name": "com.moonzy.mzframe",
+  "displayName": "MzFrame",
+  "description": "一个简单的快速开发框架",
+  "version": "0.0.1",
+  "unity": "2020.3",
+  "license": "MIT",
+  "dependencies": {
+  }
+}

@@ -1,0 +1,18 @@
+{
+    "name": "MzFrameUpm.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:7a890f2939368434ca9cd0a4f5e67c51"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
