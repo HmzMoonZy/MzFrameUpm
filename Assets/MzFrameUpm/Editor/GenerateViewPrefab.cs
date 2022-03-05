@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class GenerateViewPrefab : Editor
 {
     [MenuItem("GameObject/UI/Mz-DefaultCanvas")]
-    private static void GenerateDefaultViewPrefab()
+    private static void GenerateDefaultViewCanvas()
     {
         var view = new GameObject("ViewDefault", 
             typeof(Canvas),
@@ -34,7 +34,7 @@ public class GenerateViewPrefab : Editor
     }
     
     [MenuItem("GameObject/UI/Mz-StaticCanvas")]
-    private static void GenerateStaticViewPrefab()
+    private static void GenerateStaticViewCanvas()
     {
         var view = new GameObject("ViewStatic", 
             typeof(Canvas),

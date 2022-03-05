@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace MzFrame
 {
@@ -7,18 +8,18 @@ namespace MzFrame
         /// <summary>
         /// UI 界面的预制体.
         /// </summary>
-        protected GameObject ViewObject { get; set; }
+        public GameObject ViewObject { get; private set; }
 
         /// <summary>
         /// 根据规范, UI 界面本身必须具有一个 Canvas 组件.
         /// </summary>
-        protected Canvas ViewCanvas { get; set; }
+        public Canvas ViewCanvas { get; private set; }
 
         /// <summary>
         /// UI 的名称, 必须是唯一标识.
         /// 可以用作查找 Prefab 和 管理的 ID.
         /// </summary>
-        protected string ViewName { get; set; }
+        public string ViewName { get; private set; }
 
         /// <summary>
         /// Prefab 的特性, 在 Editor 中配置.
@@ -26,7 +27,7 @@ namespace MzFrame
         public ViewConfig ViewConfig { get; private set; }
 
         /// <summary>
-        /// UI 在该 SortLayer 下的排序顺序.
+        /// View 在该 SortLayer 下的排序顺序.
         /// </summary>
         public int SortOrder
         {
@@ -34,11 +35,11 @@ namespace MzFrame
             set => ViewCanvas.sortingOrder = value;
         }
 
-        //public Constant.ViewSort Layer
-        // {
-        //     //get => ViewConfig.
-        // }
-
+        /// <summary>
+        /// View 所在的层级.
+        /// </summary>
+        public Constant.ViewSort Layer => ViewConfig.Layer;
+        
         /// <summary>
         /// UI 是否是可见的.
         /// </summary>
@@ -47,29 +48,17 @@ namespace MzFrame
             //get => Transform.parent && Transform.parent != UIManager.HideTransform;
             get => true;
         }
-
-
-        // public UIInfo(GameObject uigo, string name, UIView viewer)
-        // {
-            // _uigo = uigo;
-            // _uigo.name = name;
-            // _name = name;
-            //
-            // _view = viewer;
-            //
-            // Config = _uigo.GetComponent<UIConfig>();
-
-            // TODO Canvas 的初始化工作由 Editor 保证.
-            // _canvas = _uigo.GetComponent<Canvas>();
-            // _canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            // _canvas.worldCamera = UIManager.UICamera;
-            // _canvas.pixelPerfect = true;
-            // _canvas.overrideSorting = false;
-            // _canvas.sortingLayerID = (int)Layer;
-        //}
         
+         public ViewInfo(GameObject viewGo, string viewName)
+         {
+             ViewObject = viewGo;
+             ViewName = viewName;
+
+             ViewCanvas = viewGo.GetComponent<Canvas>();
+             ViewConfig = viewGo.GetComponent<ViewConfig>();
         
-        
+        }
+         
         #region LifeCycle
 
         /// <summary>
@@ -79,12 +68,12 @@ namespace MzFrame
         {
         }
 
-        /// <summary>
+        /*/// <summary>
         /// 当 ViewInfo 的可见性为 True 时调用.
         /// </summary>
         public virtual void OnOpening()
         {
-        }
+        }*/
 
         /// <summary>
         /// 当 ViewInfo 被展示后调用.
@@ -101,12 +90,12 @@ namespace MzFrame
         {
         }
 
-        /// <summary>
+        /*/// <summary>
         /// 当 ViewInfo 正准备关闭时调用
         /// </summary>
         public virtual void OnClosing()
         {
-        }
+        }*/
 
         /// <summary>
         /// 当 ViewInfo 被关闭时调用,不论它是 Hidden 还是 Destroy.
