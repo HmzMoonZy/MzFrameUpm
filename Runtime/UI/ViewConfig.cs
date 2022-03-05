@@ -5,10 +5,9 @@ using UnityEngine;
 
 namespace MzFrame
 {
+    [InfoBox("请确保这个 ViewPrefab 的名称唯一且没有空格和特殊符号❗")]
     public class ViewConfig : MonoBehaviour
     {
-        [InfoBox("请确保这个 ViewPrefab 的名称唯一且没有空格和特殊符号❗")]
-        
         [Title("层级")]
         [EnumPaging]
         public Constant.ViewSort Layer;
@@ -48,20 +47,6 @@ namespace MzFrame
             var className = Path.GetFileNameWithoutExtension(viewerFilePath).Replace("_", "");
             using var sw = new StreamWriter(viewerFilePath);
             ViewCodeGenerator.GenerateViewCode(sw, className, cache);
-        }
-
-        [FilePath(ParentFolder = "Assets/")]
-        public string logicFilePath; 
-        [Button(ButtonSizes.Large)]
-        private void 生成逻辑代码()
-        {
-
-        }
-        
-        [Button(ButtonSizes.Large)]
-        private void 制作预制体()
-        {
-
         }
 
         // 遍历节点，查找所有合法的需要自动生成的节点并返回对应的名称和路径字典
