@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public partial class ViewTestInfo
 {
     public override void OnOpened(params object[] args)
     {
         Debug.Log($"{ViewName} : OnOpened!");
+
+        Debug.Log(BackGround_Button.Comp<Button>().name);
     }
 
     private float time = 0;
