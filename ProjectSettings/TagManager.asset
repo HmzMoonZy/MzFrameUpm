@@ -38,6 +38,27 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Default
+  - name: Lobby
     uniqueID: 0
+    locked: 0
+  - name: Operation
+    uniqueID: 10
+    locked: 0
+  - name: SubSystem
+    uniqueID: 15
+    locked: 0
+  - name: Load
+    uniqueID: 20
+    locked: 0
+  - name: Tip
+    uniqueID: 30
+    locked: 0
+  - name: Warning
+    uniqueID: 40
+    locked: 0
+  - name: Guide
+    uniqueID: 50
+    locked: 0
+  - name: Debug
+    uniqueID: 100
     locked: 0

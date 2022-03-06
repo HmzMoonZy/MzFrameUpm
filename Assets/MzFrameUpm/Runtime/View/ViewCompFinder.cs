@@ -8,25 +8,24 @@ namespace MzFrame
     /// </summary>
     public struct ViewCompFinder
     {
-        private Dictionary<Type, object> _cacheOfConponents;
+        private readonly Dictionary<Type, object> _cacheOfComponents;
 
-        public readonly Transform transform;
-
+        private readonly Transform _transform;
         public ViewCompFinder(Transform transform)
         {
-            this.transform = transform;
-            _cacheOfConponents = new Dictionary<Type, object>();
+            this._transform = transform;
+            _cacheOfComponents = new Dictionary<Type, object>();
         }
         
-        public T Comp<T>() where T : Component
+        public T Comp<T>() where T : MonoBehaviour
         {
             var t = typeof(T);
-            if (!_cacheOfConponents.TryGetValue(t, out object comp))
+            if (!_cacheOfComponents.TryGetValue(t, out object comp))
             {
-                comp = transform.GetComponent<T>();
+                comp = _transform.GetComponent<T>();
                 if (comp != null)
                 {
-                    _cacheOfConponents.Add(t, comp);
+                    _cacheOfComponents.Add(t, comp);
                 }
             }
 

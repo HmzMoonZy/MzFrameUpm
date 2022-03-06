@@ -55,8 +55,6 @@ using UnityEngine.UI;
             sw.Write("        }");
             sw.Write("}");
         }
-
-        
     }
 }
 

@@ -45,19 +45,22 @@ namespace MzFrame
         /// </summary>
         public bool IsVisible
         {
-            //get => Transform.parent && Transform.parent != UIManager.HideTransform;
-            get => true;
+            get
+            {
+                var parent = ViewObject.transform.parent;
+                return parent != null && parent != ViewManager.HiddenTransform;
+            }
         }
-        
-         public ViewInfo(GameObject viewGo, string viewName)
+
+        public ViewInfo(GameObject viewGo, string viewName)
          {
              ViewObject = viewGo;
              ViewName = viewName;
+             //PrefabName = ViewName.Replace("Info", "");
 
              ViewCanvas = viewGo.GetComponent<Canvas>();
              ViewConfig = viewGo.GetComponent<ViewConfig>();
-        
-        }
+         }
          
         #region LifeCycle
 
