@@ -20,6 +20,8 @@ namespace MzFrame
         /// 这个节点的子物体均会被隐藏.
         /// </summary>
         public static Transform HiddenTransform { get; private set; }
+        
+        public static Camera ViewCamera { get; private set; }
 
         public static Action<ViewInfo> OnViewOpen;
 
@@ -44,6 +46,8 @@ namespace MzFrame
             HiddenTransform = 
                 UnityEngine.Object.FindObjectsOfType<Canvas>().
                     Where(canvas => canvas.enabled == false).ToList()[0].transform;
+            
+            ViewCamera = ViewRoot.Find("ViewCamera").GetComponent<Camera>();
             
             foreach (int v in Enum.GetValues(typeof(Constant.ViewSort)))
             {
@@ -76,43 +80,39 @@ namespace MzFrame
         public static T OpenView<T>(object[] args) where T : ViewInfo
         {
             var typeName = typeof(T).Name;
-            
-            if (_CacheOfView.TryGetValue(typeName, out var info))
+            if (!_CacheOfView.TryGetValue(typeName, out var info))  // 第一次创建 View
             {
-                if (!info.IsVisible)
-                {
-                    info.ViewConfig.transform.SetParent(HiddenTransform.parent);
-                }
-                info._AutoGenerateMask();
-                info.OnOpened(args);
-                _ViewUpdate += info.Update;
-                _CacheOfVisibleView.Add(typeName, info);
-                OnViewOpen?.Invoke(info);
-                return (T)info;
+                var assetName = typeName.Replace("Info", "");
+                var viewObject = _FindAndInstantiateViewObject(assetName);
+                info = (T) Activator.CreateInstance(typeof(T), viewObject, typeName);
+                _CacheOfView.Add(typeName, info);
+                _AutoBindViewEvent(info.GetType(), info, info.ViewObject.transform);
+                info.OnCreated();
+                //info.ViewObject.transform.SetParent(HiddenTransform);
             }
-
-            var assetName = typeName.Replace("Info", "");
-            var viewObject = _FindAndInstantiateViewObject(assetName);
-            info = (T) Activator.CreateInstance(typeof(T), viewObject, typeName);
-            info.OnCreated();
             
-            info._InitializationViewInfo();
-            
+            // 唤醒 View
             info._AutoGenerateMask();
+            
+            if (!info.IsVisible)
+            {
+                info.ViewConfig.transform.SetParent(ViewRoot);
+            }
+            _CacheOfVisibleView.Add(typeName, info);
             
             if (info.ViewConfig.EnableAutoAnimation)
             {
                 // TODO 使用 DoTween 和结束回调.
             }
-            _AutoBindViewEvent(info.GetType(), info, info.ViewObject.transform);
-            info.ViewObject.transform.SetParent(ViewRoot);
-            //info.OnOpening();
+            
             info.OnOpened(args);
-            _CacheOfView.Add(typeName, info);
-            _CacheOfVisibleView.Add(typeName, info);
+
             _ViewUpdate += info.Update;
+            
             OnViewOpen?.Invoke(info);
+            
             return (T)info;
+
         }
 
         public static void CloseView<T>(object[] args = null)
@@ -129,7 +129,7 @@ namespace MzFrame
                 Debug.Log($"Try to close an already hidden view with name {typeName}");
                 return;
             }
-            
+
             //info.OnClosing();
             _ViewUpdate -= info.Update;
             _CacheOfVisibleView.Remove(typeName);
@@ -212,13 +212,7 @@ namespace MzFrame
         {
             info.ViewObject.GetComponent<GraphicRaycaster>().enabled = true;
         }
-        
-        private static void _InitializationViewInfo(this ViewInfo info)
-        {
-            info.ViewCanvas.worldCamera = ViewRoot.Find("ViewCamera").GetComponent<Camera>();
-            info.ViewCanvas.sortingLayerID = (int) info.ViewConfig.Layer;
-        }
-        
+
         private static void _AutoGenerateMask(this ViewInfo info)
         {
             if (!info.ViewConfig.EnableAutoMask) return;

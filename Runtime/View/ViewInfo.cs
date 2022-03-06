@@ -57,9 +57,11 @@ namespace MzFrame
              ViewObject = viewGo;
              ViewName = viewName;
              //PrefabName = ViewName.Replace("Info", "");
-
-             ViewCanvas = viewGo.GetComponent<Canvas>();
              ViewConfig = viewGo.GetComponent<ViewConfig>();
+             
+             ViewCanvas = viewGo.GetComponent<Canvas>();
+             ViewCanvas.sortingLayerID = (int) Layer;
+             ViewCanvas.worldCamera = ViewManager.ViewCamera;
          }
          
         #region LifeCycle
