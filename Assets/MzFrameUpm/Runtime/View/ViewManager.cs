@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using MzFrameUpm;
 using Sirenix.Utilities;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -22,16 +23,20 @@ namespace MzFrame
         public static Transform HiddenTransform { get; private set; }
         
         public static Camera ViewCamera { get; private set; }
+        
+        
 
         public static Action<ViewInfo> OnViewOpen;
 
         public static Action<ViewInfo> OnViewClose;
 
+        private static string _AddressableGroup;
+        
         /// <summary>
         /// 所有 View 的 Update 方法会在这里注册, 请在合适的地方调用.
         /// </summary>
         private static Action<float> _ViewUpdate;
-        
+
         // 所有存活的面板
         private static Dictionary<string, ViewInfo> _CacheOfView = new Dictionary<string, ViewInfo>();
         // 所有展示中的面板
@@ -39,7 +44,7 @@ namespace MzFrame
         // 所有层级的排序
         private static Dictionary<int, int> _CacheOfOderForLayer = new Dictionary<int, int>();
 
-        public static void Init()
+        public static void Init(/*string addressableGroup*/)
         {
             ViewRoot = UnityEngine.Object.FindObjectOfType<EventSystem>().transform;
             
@@ -48,6 +53,8 @@ namespace MzFrame
                     Where(canvas => canvas.enabled == false).ToList()[0].transform;
             
             ViewCamera = ViewRoot.Find("ViewCamera").GetComponent<Camera>();
+
+            //_AddressableGroup = addressableGroup;
             
             foreach (int v in Enum.GetValues(typeof(Constant.ViewSort)))
             {
@@ -70,7 +77,6 @@ namespace MzFrame
                         .OrderBy(viewInfo => viewInfo.SortOrder).ToList()
                         .ForEach((viewInfo, i) => viewInfo.SortOrder = i);
                 }
-
             };
         }
         
@@ -167,10 +173,14 @@ namespace MzFrame
 
         private static GameObject _FindAndInstantiateViewObject(string viewName)
         {
-            //Debug.Log($"ViewManager 01: 准备实例化 ViewGo {viewName}");
-            // TODO 用 Addressble 实现
-            var viewGo = UnityEngine.Object.Instantiate(Resources.Load<GameObject>(viewName));
-            return viewGo;
+            var request = new ResourcesRequest<GameObject>()
+            {
+                assetName = viewName,
+                labels = null,
+                onLoad = null,
+            };
+
+            return ResourcesManager.Instantiate(request);
         }
         
         private static void _AutoBindViewEvent(Type infoType, ViewInfo info, Transform t)
@@ -219,12 +229,12 @@ namespace MzFrame
             
             var mask = new GameObject("__AutoMask", typeof(Image));
             mask.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
-
+            
             var rectTrans = mask.GetComponent<RectTransform>();
             rectTrans.sizeDelta = new Vector2(5000, 5000);
-
-            rectTrans.SetParent(info.ViewObject.transform);
+            rectTrans.SetParent(info.ViewObject.transform, true);
             rectTrans.localPosition = Vector2.zero;
+            rectTrans.localScale = Vector3.one;
             rectTrans.SetAsFirstSibling();
             
             if (!info.ViewConfig.ClickMaskTriggerClose) return;
