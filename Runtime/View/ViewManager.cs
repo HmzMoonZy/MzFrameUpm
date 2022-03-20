@@ -24,8 +24,6 @@ namespace MzFrame
         
         public static Camera ViewCamera { get; private set; }
         
-        
-
         public static Action<ViewInfo> OnViewOpen;
 
         public static Action<ViewInfo> OnViewClose;
@@ -53,8 +51,6 @@ namespace MzFrame
                     Where(canvas => canvas.enabled == false).ToList()[0].transform;
             
             ViewCamera = ViewRoot.Find("ViewCamera").GetComponent<Camera>();
-
-            //_AddressableGroup = addressableGroup;
             
             foreach (int v in Enum.GetValues(typeof(Constant.ViewSort)))
             {
