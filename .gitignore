@@ -64,3 +64,6 @@ crashlytics-build.properties
 
 /[Aa]ssets/Temp.meta
 /[Aa]ssets/Temp/*
+
+/[Aa]ssets/Example
+/[Aa]ssets/Example.meta

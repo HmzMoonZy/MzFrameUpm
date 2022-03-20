@@ -60,8 +60,8 @@ namespace MzFrame
              ViewConfig = viewGo.GetComponent<ViewConfig>();
              
              ViewCanvas = viewGo.GetComponent<Canvas>();
-             ViewCanvas.sortingLayerID = (int) Layer;
              ViewCanvas.worldCamera = ViewManager.ViewCamera;
+             ViewCanvas.sortingLayerID = (int) Layer;
          }
          
         #region LifeCycle
