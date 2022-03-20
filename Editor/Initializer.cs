@@ -4,63 +4,66 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-
-public class Initializer : Editor
+namespace MzFrame.Editor
 {
-    [MenuItem("MzFrame/在场景中初始化")]
-    private static void InitMzFrame()
+    public class Initializer : UnityEditor.Editor
     {
-        
-    }
-    
-    [MenuItem("MzFrame/UI TOOL/初始化 ViewSort")]
-    private static void InitSortingLayer()
-    {
-        var type = typeof(MzFrame.Constant.ViewSort);
-
-        // 先遍历枚举拿到枚举的字符串
-        List<string> lstSceenPriority = new List<string>();
-        foreach (int v in Enum.GetValues(type))
+        [MenuItem("MzFrame/在场景中初始化")]
+        private static void InitMzFrame()
         {
-            lstSceenPriority.Add(Enum.GetName(type, v));
+            var c = MzFrameConfig.Config;
+            Debug.Log(c.autoViewPath);
         }
-
-        // 清除数据
-        SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-        SerializedProperty it = tagManager.GetIterator();
-        while (it.NextVisible(true))
+        
+        [MenuItem("MzFrame/UI TOOL/初始化 ViewSort")]
+        private static void InitSortingLayer()
         {
-            if (it.name != "m_SortingLayers")
+            var type = typeof(MzFrame.Constant.ViewSort);
+    
+            // 先遍历枚举拿到枚举的字符串
+            List<string> lstSceenPriority = new List<string>();
+            foreach (int v in Enum.GetValues(type))
             {
-                continue;
+                lstSceenPriority.Add(Enum.GetName(type, v));
             }
-            // 先删除所有
-            while (it.arraySize > 0)
+    
+            // 清除数据
+            SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+            SerializedProperty it = tagManager.GetIterator();
+            while (it.NextVisible(true))
             {
-                it.DeleteArrayElementAtIndex(0);
-            }
-
-            // 重新插入
-            // 将枚举字符串生成到 sortingLayer
-            foreach (var s in lstSceenPriority)
-            {
-                it.InsertArrayElementAtIndex(it.arraySize);
-                SerializedProperty dataPoint = it.GetArrayElementAtIndex(it.arraySize - 1);
-
-                while (dataPoint.NextVisible(true))
+                if (it.name != "m_SortingLayers")
                 {
-                    if (dataPoint.name == "name")
+                    continue;
+                }
+                // 先删除所有
+                while (it.arraySize > 0)
+                {
+                    it.DeleteArrayElementAtIndex(0);
+                }
+    
+                // 重新插入
+                // 将枚举字符串生成到 sortingLayer
+                foreach (var s in lstSceenPriority)
+                {
+                    it.InsertArrayElementAtIndex(it.arraySize);
+                    SerializedProperty dataPoint = it.GetArrayElementAtIndex(it.arraySize - 1);
+    
+                    while (dataPoint.NextVisible(true))
                     {
-                        dataPoint.stringValue = s;
-                    }
-                    else if (dataPoint.name == "uniqueID")
-                    {
-                        dataPoint.intValue = (int)Enum.Parse(type, s);
+                        if (dataPoint.name == "name")
+                        {
+                            dataPoint.stringValue = s;
+                        }
+                        else if (dataPoint.name == "uniqueID")
+                        {
+                            dataPoint.intValue = (int)Enum.Parse(type, s);
+                        }
                     }
                 }
             }
+            tagManager.ApplyModifiedProperties();
+            AssetDatabase.SaveAssets();
         }
-        tagManager.ApplyModifiedProperties();
-        AssetDatabase.SaveAssets();
     }
 }
