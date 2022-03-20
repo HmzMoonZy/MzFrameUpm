@@ -21,7 +21,8 @@ public class GenerateViewPrefab : Editor
 
         var canvas = view.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceCamera;
-        canvas.worldCamera = FindObjectsOfType<Camera>().Where(camera => camera.transform.name.Equals("ViewCamera")).ToList()[0];
+        var list = FindObjectsOfType<Camera>().Where(camera => camera.transform.name.Equals("ViewCamera")).ToList();
+        canvas.worldCamera = list.Count != 0 ? list[0] : Camera.main;
         canvas.planeDistance = 100;
         canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.None;
         canvas.pixelPerfect = true;
@@ -29,11 +30,10 @@ public class GenerateViewPrefab : Editor
         var scaler = view.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
         
-        
         var raycaster = view.GetComponent<GraphicRaycaster>();
     }
     
-    [MenuItem("GameObject/UI/Mz-StaticCanvas")]
+    /*[MenuItem("GameObject/UI/Mz-StaticCanvas")]
     private static void GenerateStaticViewCanvas()
     {
         var view = new GameObject("ViewStatic", 
@@ -51,5 +51,5 @@ public class GenerateViewPrefab : Editor
 
         var scaler = view.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
-    }
+    }*/
 }

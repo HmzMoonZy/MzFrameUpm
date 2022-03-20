@@ -83,7 +83,7 @@ namespace MzFrame
         /// <summary>
         /// 打开一个和 T 同名的 View.
         /// </summary>
-        public static T OpenView<T>(object[] args) where T : ViewInfo
+        public static T OpenView<T>(object[] args = null) where T : ViewInfo
         {
             var typeName = typeof(T).Name;
             if (!_CacheOfView.TryGetValue(typeName, out var info))  // 第一次创建 View
