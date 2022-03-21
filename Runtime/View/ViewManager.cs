@@ -94,7 +94,7 @@ namespace MzFrame
             }
             
             // 唤醒 View
-            info._AutoGenerateMask();
+            _AutoGenerateMask(info);
             
             if (!info.IsVisible)
             {
@@ -119,38 +119,7 @@ namespace MzFrame
 
         public static void CloseView<T>(object[] args = null)
         {
-            var typeName = typeof(T).Name;
-            if (!_CacheOfView.TryGetValue(typeName, out var info))
-            {
-                Debug.Log($"Try to close a view with name {typeName} that does not exist ");
-                return;
-            }
-
-            if (info is {IsVisible: false})     // info != null && !info.IsVisible
-            {
-                Debug.Log($"Try to close an already hidden view with name {typeName}");
-                return;
-            }
-
-            //info.OnClosing();
-            _ViewUpdate -= info.Update;
-            _CacheOfVisibleView.Remove(typeName);
-            OnViewClose(info);
-            if (info.ViewConfig.EnableAutoMask)
-            {
-                UnityEngine.Object.Destroy(info.ViewObject.transform.GetChild(0).gameObject);
-            }
-
-            if (info.ViewConfig.IsCache)
-            {
-                info.ViewObject.transform.SetParent(HiddenTransform);
-            }
-            else
-            {
-                _CacheOfView.Remove(typeName);
-                UnityEngine.Object.Destroy(info.ViewObject);
-                info = null;
-            }
+            _CloseView(typeof(T).Name, args);
         }
 
         public static void Update()
@@ -204,22 +173,42 @@ namespace MzFrame
             }
         }
 
-        
-        #endregion
-
-        #region ViewInfo Extension Methods
-        
-        public static void Freeze(this ViewInfo info)
+        private static void _CloseView(string typeName, object[] args = null)
         {
-            info.ViewObject.GetComponent<GraphicRaycaster>().enabled = false;
+            if (!_CacheOfView.TryGetValue(typeName, out var info))
+            {
+                Debug.Log($"Try to close a view with name {typeName} that does not exist ");
+                return;
+            }
+
+            if (info is {IsVisible: false})     // info != null && !info.IsVisible
+            {
+                Debug.Log($"Try to close an already hidden view with name {typeName}");
+                return;
+            }
+            
+            _ViewUpdate -= info.Update;
+            _CacheOfVisibleView.Remove(typeName);
+            OnViewClose(info);
+            if (info.ViewConfig.EnableAutoMask)
+            {
+                UnityEngine.Object.Destroy(info.ViewObject.transform.GetChild(0).gameObject);
+            }
+
+            if (info.ViewConfig.IsCache)
+            {
+                info.ViewObject.transform.SetParent(HiddenTransform);
+            }
+            else
+            {
+                _CacheOfView.Remove(typeName);
+                UnityEngine.Object.Destroy(info.ViewObject);
+                info = null;
+            }
         }
         
-        public static void UnFreeze(this ViewInfo info)
-        {
-            info.ViewObject.GetComponent<GraphicRaycaster>().enabled = true;
-        }
-
-        private static void _AutoGenerateMask(this ViewInfo info)
+        
+        private static void _AutoGenerateMask(ViewInfo info)
         {
             if (!info.ViewConfig.EnableAutoMask) return;
             
@@ -233,9 +222,28 @@ namespace MzFrame
             rectTrans.localScale = Vector3.one;
             rectTrans.SetAsFirstSibling();
             
-            if (!info.ViewConfig.ClickMaskTriggerClose) return;
-            // TODO 添加快速点击组件
+            if (info.ViewConfig.ClickMaskTriggerClose)
+            {
+                var name = info.GetType().Name;
+                mask.AddComponent<QuickClickEvent>().AddListener(e =>
+                {
+                    _CloseView(name);
+                });
+            }
+        }
+        
+        #endregion
 
+        #region ViewInfo Extension Methods
+        
+        public static void Freeze(this ViewInfo info)
+        {
+            info.ViewObject.GetComponent<GraphicRaycaster>().enabled = false;
+        }
+        
+        public static void UnFreeze(this ViewInfo info)
+        {
+            info.ViewObject.GetComponent<GraphicRaycaster>().enabled = true;
         }
 
         #endregion
