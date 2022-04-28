@@ -17,7 +17,7 @@ namespace MzFrame
             _cacheOfComponents = new Dictionary<Type, object>();
         }
         
-        public T Comp<T>() where T : MonoBehaviour
+        public T Comp<T>() where T : Component
         {
             var t = typeof(T);
             if (!_cacheOfComponents.TryGetValue(t, out object comp))
