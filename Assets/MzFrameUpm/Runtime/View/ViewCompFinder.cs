@@ -8,12 +8,16 @@ namespace MzFrame
     /// </summary>
     public struct ViewCompFinder
     {
-        private readonly Dictionary<Type, object> _cacheOfComponents;
+        public readonly Transform transform;
 
-        private readonly Transform _transform;
+        public readonly GameObject gameObject;
+        
+        private readonly Dictionary<Type, object> _cacheOfComponents;
+        
         public ViewCompFinder(Transform transform)
         {
-            this._transform = transform;
+            this.transform = transform;
+            this.gameObject = transform.gameObject;
             _cacheOfComponents = new Dictionary<Type, object>();
         }
         
@@ -22,7 +26,7 @@ namespace MzFrame
             var t = typeof(T);
             if (!_cacheOfComponents.TryGetValue(t, out object comp))
             {
-                comp = _transform.GetComponent<T>();
+                comp = transform.GetComponent<T>();
                 if (comp != null)
                 {
                     _cacheOfComponents.Add(t, comp);
@@ -30,6 +34,12 @@ namespace MzFrame
             }
 
             return (T)comp;
+        }
+
+        public ViewCompFinder Instantiate(Transform parent, bool worldPositionStays = false)
+        {
+           var t = UnityEngine.Object.Instantiate(gameObject, parent, worldPositionStays).transform;
+           return new ViewCompFinder(t);
         }
     }
 }

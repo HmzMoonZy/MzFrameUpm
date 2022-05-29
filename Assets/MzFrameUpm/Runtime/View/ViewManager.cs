@@ -65,6 +65,7 @@ namespace MzFrame
             
             OnViewClose += info =>
             {
+                info.OnClose();
                 _CacheOfOderForLayer[(int) info.Layer] -= 1;
                 if (info.SortOrder != _CacheOfOderForLayer[(int) info.Layer])
                 {
@@ -79,7 +80,7 @@ namespace MzFrame
         /// <summary>
         /// 打开一个和 T 同名的 View.
         /// </summary>
-        public static T OpenView<T>(object[] args = null) where T : ViewInfo
+        public static T OpenView<T>(params object[] args) where T : ViewInfo
         {
             var typeName = typeof(T).Name;
             if (!_CacheOfView.TryGetValue(typeName, out var info))  // 第一次创建 View
@@ -197,10 +198,12 @@ namespace MzFrame
 
             if (info.ViewConfig.IsCache)
             {
+                info.OnHidden();
                 info.ViewObject.transform.SetParent(HiddenTransform);
             }
             else
             {
+                info.OnDestroy();
                 _CacheOfView.Remove(typeName);
                 UnityEngine.Object.Destroy(info.ViewObject);
                 info = null;
