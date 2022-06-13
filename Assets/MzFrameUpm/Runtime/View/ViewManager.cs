@@ -100,6 +100,7 @@ namespace MzFrame
             if (!info.IsVisible)
             {
                 info.ViewConfig.transform.SetParent(ViewRoot);
+                if(!info.ViewObject.activeSelf) info.ViewObject.SetActive(true);
             }
             _CacheOfVisibleView.Add(typeName, info);
             
