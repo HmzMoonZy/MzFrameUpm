@@ -91,7 +91,14 @@ namespace MzFrame
                 _CacheOfView.Add(typeName, info);
                 _AutoBindViewEvent(info.GetType(), info, info.ViewObject.transform);
                 info.OnCreated();
-                //info.ViewObject.transform.SetParent(HiddenTransform);
+                info.ViewObject.transform.SetParent(HiddenTransform);
+            }
+
+            // 重复打开 UI
+            if (info.IsVisible)
+            {
+                Debug.Log("尝试打开一个已经展示的 View");
+                return (T)info;
             }
             
             // 唤醒 View
@@ -116,7 +123,6 @@ namespace MzFrame
             OnViewOpen?.Invoke(info);
             
             return (T)info;
-
         }
 
         public static void CloseView<T>(object[] args = null)
