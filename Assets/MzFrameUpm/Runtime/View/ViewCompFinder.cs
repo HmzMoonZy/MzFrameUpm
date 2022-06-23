@@ -6,7 +6,7 @@ namespace MzFrame
     /// <summary>
     /// 这是用以查找组件的结构体。
     /// </summary>
-    public struct ViewCompFinder
+    public class ViewCompFinder
     {
         public readonly Transform transform;
 
