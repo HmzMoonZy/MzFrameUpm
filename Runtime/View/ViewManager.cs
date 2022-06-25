@@ -52,7 +52,7 @@ namespace MzFrame
             
             ViewCamera = ViewRoot.Find("ViewCamera").GetComponent<Camera>();
             
-            foreach (int v in Enum.GetValues(typeof(Constant.ViewSort)))
+            foreach (int v in Enum.GetValues(typeof(ViewSort)))
             {
                 _CacheOfOderForLayer.Add(v, 0);
             }

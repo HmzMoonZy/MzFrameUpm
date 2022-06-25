@@ -38,7 +38,7 @@ namespace MzFrame
         /// <summary>
         /// View 所在的层级.
         /// </summary>
-        public Constant.ViewSort Layer => ViewConfig.Layer;
+        public ViewSort Layer => ViewConfig.Layer;
         
         /// <summary>
         /// UI 是否是可见的.
