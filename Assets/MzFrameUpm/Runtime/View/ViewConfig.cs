@@ -9,7 +9,7 @@ namespace MzFrame
     [InfoBox("请确保这个 ViewPrefab 的名称唯一且没有空格和特殊符号❗")]
     public class ViewConfig : MonoBehaviour
     {
-        [Title("层级")] [EnumPaging] public Constant.ViewSort Layer;
+        [Title("层级")] [EnumPaging] public ViewSort Layer;
 
         [Title("自动遮罩")] public bool EnableAutoMask = true;
         [ShowIf("EnableAutoMask")] public bool ClickMaskTriggerClose = false;

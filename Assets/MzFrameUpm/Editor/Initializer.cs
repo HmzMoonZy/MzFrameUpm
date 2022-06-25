@@ -18,7 +18,7 @@ namespace MzFrame.Editor
         [MenuItem("MzFrame/UI TOOL/初始化 ViewSort")]
         private static void InitSortingLayer()
         {
-            var type = typeof(MzFrame.Constant.ViewSort);
+            var type = typeof(MzFrame.ViewSort);
     
             // 先遍历枚举拿到枚举的字符串
             List<string> lstSceenPriority = new List<string>();
