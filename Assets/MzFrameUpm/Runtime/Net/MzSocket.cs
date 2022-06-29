@@ -163,6 +163,11 @@ namespace MzFrame
                 _router.AddListener(token, @event);
             }
         }
+
+        public void DeregisterEvent(string token)
+        {
+            _router.DelListener(token);
+        }
         
 
         #endregion
