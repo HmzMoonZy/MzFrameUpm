@@ -167,6 +167,7 @@ namespace MzFrame
         public void DeregisterEvent(string token)
         {
             _router.DelListener(token);
+            _router.DelOnceListener(token);
         }
         
 
