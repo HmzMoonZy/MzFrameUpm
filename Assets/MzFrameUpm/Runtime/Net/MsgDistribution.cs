@@ -102,12 +102,28 @@ namespace MzFrame
             }
         }
 
-        public void DelOnceListener(string callback, ProtolDelegate protDel)
+        public void DelListener(string token)
         {
-            if (_onceDict.ContainsKey(callback))
+            if (_eventDict.ContainsKey(token))
             {
-                _onceDict[callback] -= protDel;
-                if (_onceDict[callback] == null) _onceDict.Remove(callback);
+                _eventDict.Remove(token);
+            }
+        }
+
+        public void DelOnceListener(string token)
+        {
+            if (_onceDict.ContainsKey(token))
+            {
+                _onceDict.Remove(token);
+            }
+        }
+
+        public void DelOnceListener(string token, ProtolDelegate protDel)
+        {
+            if (_onceDict.ContainsKey(token))
+            {
+                _onceDict[token] -= protDel;
+                if (_onceDict[token] == null) _onceDict.Remove(token);
             }
         }
 
