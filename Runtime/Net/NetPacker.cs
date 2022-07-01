@@ -107,9 +107,10 @@ namespace MzFrame
             if (bufferCount <= 2) return null;
 
             //解析包头
-            readLength = BitConverter.ToInt16(readBuffer, 0);
-            var op = BitConverter.ToInt16(readBuffer, 3); 
-            var sub = BitConverter.ToInt16(readBuffer, 5);
+            // TODO 优化性能
+            readLength = BitConverter.ToInt16(readBuffer.Take(2).Reverse().ToArray(),0 );
+            var op = BitConverter.ToInt16(readBuffer.Skip(2).Take(2).Reverse().ToArray(),0); 
+            var sub = BitConverter.ToInt16(readBuffer.Skip(4).Take(2).Reverse().ToArray(),0);
 
 
             if (bufferCount < readLength + 4) return null;
