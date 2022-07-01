@@ -10,6 +10,11 @@ public class GameServer
     public GameServer()
     {
         _server = new MzSocket(NetConfig.Default, BytesToNetMessage, NetMessageToString);
+        
+        _server.RegisterEvent(((short)EnumOp.HeartBeat).ToString(), message =>
+        {
+            Debug.Log("收到心跳回应!");
+        });
     }
 
     public void Update()
@@ -31,8 +36,14 @@ public class GameServer
         };
         var msg = NetMessageBuilder.Request(EnumOp.Login, JsonUtility.ToJson(d));
         
-        _server.RegisterEvent(((short) (EnumOp.Login)).ToString(), callback);
+        _server.RegisterEvent(((short) (EnumOp.Login)).ToString(), callback, true);
         
+        Send(ref msg);
+    }
+
+    public void HeartBeat()
+    {
+        var msg = NetMessageBuilder.Request(EnumOp.HeartBeat, null);
         Send(ref msg);
     }
 

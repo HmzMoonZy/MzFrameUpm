@@ -38,7 +38,7 @@ public class NetDemo : MonoBehaviour
     
     public void SendMsg()
     {
-        _gameServer.Login("mz001", "926484", message =>
+        _gameServer.Login("mz001", "123", message =>
         {
             if (message.sub == (short)EnumSub.Suc)
             {
@@ -50,6 +50,16 @@ public class NetDemo : MonoBehaviour
                 Debug.Log(message.data);
             }
         });
+    }
+
+    public void HeartBeat()
+    {
+        InvokeRepeating(nameof(SendHeartBeat), 3, 3);
+    }
+
+    public void SendHeartBeat()
+    {
+        _gameServer.HeartBeat();
     }
 
     private void OnDestroy()
