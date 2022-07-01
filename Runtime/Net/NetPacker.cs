@@ -101,29 +101,30 @@ namespace MzFrame
         #endregion
 
         #region TCP 拆包
-
-        /// <summary>
-        /// TODO 按照规则解包 packet
-        /// </summary>
-        public static byte[] UnPacket(byte[] readBuffer, int bufferCount, bool encryption, out int readLength)
+        public static NetMessage UnPacket(byte[] readBuffer, int bufferCount, bool encryption, out int readLength)
         {
             readLength = 0;
-            var headSize = sizeof(short);
-            if (bufferCount <= headSize) return null;
+            if (bufferCount <= 2) return null;
 
             //解析包头
-            var head = readBuffer.Take(2).Reverse().ToArray();
+            readLength = BitConverter.ToInt16(readBuffer, 0);
+            var op = BitConverter.ToInt16(readBuffer, 3); 
+            var sub = BitConverter.ToInt16(readBuffer, 5);
 
-            readLength = BitConverter.ToInt16(head, 0);
 
-            if (bufferCount < readLength + headSize) return null;
+            if (bufferCount < readLength + 4) return null;
 
             //解析数据
             var msgBuffer = new byte[readLength];
-            Array.Copy(readBuffer, headSize, msgBuffer, 0, readLength);
-            readLength += headSize;
+            Array.Copy(readBuffer, 6, msgBuffer, 0, readLength);
+            readLength += 6;
 
-            return msgBuffer;
+            return new NetMessage()
+            {
+                op =  op,
+                sub =  sub,
+                data = Encoding.UTF8.GetString(msgBuffer)
+            };
         }
 
         #endregion

@@ -15,14 +15,9 @@ namespace MzFrame
         public Action<NetErrMsg> OnNetErr;
 
         /// <summary>
-        /// 接收到字节数组,MzNet会帮你切割包头,保证数组可用.
-        /// </summary>
-        public Func<byte[], NetMessage> OnReceiveBytes;
-
-        /// <summary>
         /// 将 即将发送的 NetMessage 序列化为字符串(通常是json)
         /// </summary>
-        public Func<NetMessage, string> OnSerialization;
+        //public Func<NetMessage, string> OnSerialization;
 
         /// <summary>
         /// 缓存区
@@ -218,10 +213,10 @@ namespace MzFrame
         /// </summary>
         private void ProcessPacket()
         {
-            var msgBuffer = NetPacker.UnPacket(_buffer, _bufferPoint, _config.EnableEncryption, out int len);
-            if (msgBuffer == null) return;
+            var netMessage = NetPacker.UnPacket(_buffer, _bufferPoint, _config.EnableEncryption, out int len);
+            if (netMessage == null) return;
             // 交付给路由
-            _router.AddMsg(OnReceiveBytes.Invoke(msgBuffer));
+            _router.AddMsg(netMessage);
             
             //将剩余未解析的消息复制到buffer首,并将指针提前
             int count = _bufferPoint - len;
