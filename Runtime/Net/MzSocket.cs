@@ -50,17 +50,6 @@ namespace MzFrame
             _socket = new Socket(config.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             _router = new MsgDistribution(config.Tick);
         }
-        
-        public MzSocket(NetConfig config,  Func<byte[], NetMessage> receiveBytes) : this(config)
-        {
-            this.OnReceiveBytes = receiveBytes;
-        }
-
-        public MzSocket(NetConfig config, Func<byte[], NetMessage> receiveBytes, Func<NetMessage, string> serialization)
-            : this(config, receiveBytes)
-        {
-            this.OnSerialization = serialization;
-        }
 
         #endregion
 
@@ -112,14 +101,7 @@ namespace MzFrame
 
         public void Send(ref NetMessage msg)
         {
-            if (OnSerialization != null)
-            {
-                SendWithLength(OnSerialization.Invoke(msg));
-            }
-            else
-            {
-               _socket.Send(NetPacker.ToPacket(ref msg));
-            }
+            _socket.Send(NetPacker.ToPacket(ref msg));
         }
 
         /// <summary>
@@ -146,7 +128,7 @@ namespace MzFrame
         {
             _router.Update();
         }
-        
+
         public void RegisterEvent(string token, Action<NetMessage> @event, bool triggerOnce = false)
         {
             if (triggerOnce)
@@ -164,7 +146,6 @@ namespace MzFrame
             _router.DelListener(token);
             _router.DelOnceListener(token);
         }
-        
 
         #endregion
 
@@ -217,12 +198,12 @@ namespace MzFrame
             if (netMessage == null) return;
             // 交付给路由
             _router.AddMsg(netMessage);
-            
+
             //将剩余未解析的消息复制到buffer首,并将指针提前
             int count = _bufferPoint - len;
             Array.Copy(_buffer, sizeof(int) + len, _buffer, 0, count);
             _bufferPoint = count;
-            
+
             //继续解析剩余消息
             if (_bufferPoint > 0) ProcessPacket();
         }
